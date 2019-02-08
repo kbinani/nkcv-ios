@@ -18,26 +18,22 @@
                         <rect key="frame" x="0.0" y="0.0" width="834" height="1112"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="SBA-qi-7tZ">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lGl-wr-9Qz" customClass="ContainerView" customModule="nkcv_ios" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="10" width="834" height="1112"/>
-                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <wkWebViewConfiguration key="configuration">
-                                    <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
-                                    <wkPreferences key="preferences"/>
-                                </wkWebViewConfiguration>
-                            </wkWebView>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="SBA-qi-7tZ" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="Acc-du-rxg"/>
-                            <constraint firstItem="SBA-qi-7tZ" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="gYb-DP-QHe"/>
-                            <constraint firstItem="SBA-qi-7tZ" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="jfe-dg-tBL"/>
-                            <constraint firstItem="SBA-qi-7tZ" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" id="yRI-xP-oXw"/>
+                            <constraint firstItem="lGl-wr-9Qz" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="BOr-UB-3tL"/>
+                            <constraint firstItem="lGl-wr-9Qz" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="TxL-oa-2Jm"/>
+                            <constraint firstItem="lGl-wr-9Qz" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" id="h0R-im-Qh7"/>
+                            <constraint firstItem="lGl-wr-9Qz" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="uZg-ux-p5k"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
-                        <outlet property="webView" destination="SBA-qi-7tZ" id="3XN-Yr-AkD"/>
+                        <outlet property="containerView" destination="lGl-wr-9Qz" id="4dV-LT-tWo"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

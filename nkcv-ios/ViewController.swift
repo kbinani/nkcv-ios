@@ -1,7 +1,7 @@
 import UIKit
 import WebKit
 import Foundation
-//import SafariServices
+import SafariServices
 
 @IBDesignable
 class ContainerView : UIView {
@@ -26,7 +26,7 @@ class URLSchemeHandler : NSObject, WKURLSchemeHandler {
 
 class ViewController: UIViewController {
 //    private weak var webView: WKWebView!
-    private weak var webView: UIWebView!
+//    private weak var webView: UIWebView!
     private let handler: URLSchemeHandler = URLSchemeHandler()
     @IBOutlet weak var containerView: ContainerView!
 
@@ -54,20 +54,34 @@ class ViewController: UIViewController {
         let webConfiguration = WKWebViewConfiguration()
         webConfiguration.userContentController = userController
 
-        let webView = UIWebView(frame: .zero)
+//        let webView = UIWebView(frame: .zero)
 //        let webView = WKWebView(frame: .zero, configuration: webConfiguration)
-        self.containerView.addSubview(webView)
-        self.webView = webView
+//        self.containerView.addSubview(webView)
+//        self.webView = webView
 
 //        self.webView.configuration = webConfiguration
 
-        let request = URLRequest(url: ViewController.kGameURL)
+//        let request = URLRequest(url: ViewController.kGameURL)
 //        self.webView.navigationDelegate = self
 //        self.webView.load(request)
 
-        webView.delegate = self
-        webView.loadRequest(request)
+//        webView.delegate = self
+//        webView.loadRequest(request)
+
+        /*        addChild(toolContainerVC)
+         toolHostView.insertSubview(toolContainerVC.view, at: 0)
+         toolContainerVC.didMove(toParent: self)
+*/
+        let vc = SFSafariViewController(url: ViewController.kGameURL)
+        vc.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        vc.view.frame = self.view.bounds
+
+        addChild(vc)
+        self.view.addSubview(vc.view)
+        vc.didMove(toParent: self)
     }
+
+//    override func viewwill
 }
 
 extension ViewController : UIWebViewDelegate {
