@@ -48,9 +48,16 @@ class ViewController: UIViewController {
 
 extension ViewController : WKScriptMessageHandler {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        if message.name == "callbackHandler" {
-            print(message.body)
+        guard message.name == "callbackHandler" else {
+            return
         }
+        guard let body = message.body as? [String: Any] else {
+            return
+        }
+        guard let api = body["url"] as? String, let response = body["response"] as? String, let request = body["request"] as? String else {
+            return
+        }
+        print(api, request)
     }
 }
 
@@ -59,27 +66,18 @@ extension ViewController : WKNavigationDelegate {
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         if self.gameContentLoadRequested {
             let script = """
-            axios.interceptors.request.use(function (config) {
-                // Do something before request is sent
-                //window.webkit.messageHandlers.callbackHandler.postMessage(Object.keys(config));
-                window.webkit.messageHandlers.callbackHandler.postMessage(config.url);
-                return config;
-            }, function (error) {
-                // Do something with request error
-                return Promise.reject(error);
-            });
-
-            // Add a response interceptor
             axios.interceptors.response.use(function (response) {
-                // Do something with response data
-                //window.webkit.messageHandlers.callbackHandler.postMessage(Object.keys(response));
-                window.webkit.messageHandlers.callbackHandler.postMessage(response.data);
-               return response;
+                const data = {
+                    url: response.config.url,
+                    response: response.data,
+                    request: response.config.data
+                };
+                window.webkit.messageHandlers.callbackHandler.postMessage(data);
+                return response;
             }, function (error) {
-                // Do something with response error
                 return Promise.reject(error);
             });
-"""
+            """
             webView.evaluateJavaScript(script) { (value, error) in
                 print(error)
             }
