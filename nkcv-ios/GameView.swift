@@ -12,7 +12,8 @@ class GameView : UIView {
 
     private var gameContentURL: URL? = nil
     private var gameContentLoadRequested: Bool = false
-    private weak var webView: WKWebView!
+    private var webView: WKWebView?
+    private let subscriber = NotificationCenterSubscriber()
 
     private let kGameURL = URL(string: "http://www.dmm.com/netgame/social/-/gadgets/=/app_id=854854/")!
     private let kDefaultSize = CGSize(width: 1200, height: 720)
@@ -36,18 +37,73 @@ class GameView : UIView {
 
         let request = URLRequest(url: kGameURL)
         webView.load(request)
+
+        subscribe()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
+    deinit {
+        unsubscribe()
+    }
+
     override func layoutSubviews() {
         super.layoutSubviews()
         let scale = kDefaultSize.scaleAspectFit(within: self.bounds.size)
-        webView.transform = CGAffineTransform(scaleX: scale, y: scale)
+        webView?.transform = CGAffineTransform(scaleX: scale, y: scale)
         let size = kDefaultSize.aspectFit(within: self.bounds.size)
-        webView.frame = CGRect(origin: .zero, size: size)
+        webView?.frame = CGRect(origin: .zero, size: size)
+    }
+
+    private func subscribe() {
+        subscriber.subscribe(for: UIApplication.didEnterBackgroundNotification, object: nil, queue: nil) { [weak self] (subscriber, note) in
+            runOnMain {
+                self?.detachWebView()
+            }
+        }
+        subscriber.subscribe(for: UIApplication.didBecomeActiveNotification, object: nil, queue: nil) { [weak self] (subscriber, note) in
+            runOnMain {
+                self?.attachWebView()
+            }
+        }
+    }
+
+    private func unsubscribe() {
+        subscriber.unsubscribeAll()
+    }
+
+    private func attachWebView() {
+        guard let webView = self.webView else {
+            return
+        }
+        let script = """
+(function() {
+    Howler.mute(false);
+})();
+"""
+        webView.evaluateJavaScript(script) { (_, error) in
+            if let error = error {
+                print(error)
+            }
+        }
+    }
+
+    private func detachWebView() {
+        guard let webView = self.webView else {
+            return
+        }
+        let script = """
+(function() {
+    Howler.mute(true);
+})();
+"""
+        webView.evaluateJavaScript(script) { (_, error) in
+            if let error = error {
+                print(error)
+            }
+        }
     }
 }
 
@@ -127,6 +183,54 @@ extension GameView : WKNavigationDelegate {
             decisionHandler(.cancel)
         } else {
             decisionHandler(.allow)
+        }
+    }
+}
+
+
+class NotificationCenterSubscriber {
+    private var observers: [NSObjectProtocol] = []
+
+    func subscribe(for name: Notification.Name, object: Any?, queue: OperationQueue?, using block: @escaping (NotificationCenterSubscriber, Notification) -> Void) {
+        let observer = NotificationCenter.default.addObserver(forName: name, object: object, queue: queue) { [weak self] (note) in
+            guard let self = self else {
+                return
+            }
+            block(self, note)
+        }
+        runOnMain { [weak self] in
+            guard let self = self else {
+                return
+            }
+            self.observers.append(observer)
+        }
+    }
+
+    func unsubscribeAll() {
+        runOnMain { [weak self] in
+            self?.unsubscribe()
+        }
+    }
+
+    deinit {
+        self.unsubscribe()
+    }
+
+    private func unsubscribe() {
+        self.observers.reversed().forEach { (it) in
+            NotificationCenter.default.removeObserver(it)
+        }
+        self.observers.removeAll()
+    }
+}
+
+
+func runOnMain(_ block: @escaping () -> Void) {
+    if Thread.isMainThread {
+        block()
+    } else {
+        DispatchQueue.main.async {
+            block()
         }
     }
 }
