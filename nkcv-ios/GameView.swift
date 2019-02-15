@@ -2,15 +2,24 @@ import Foundation
 import WebKit
 
 
+protocol GameViewDelegate : AnyObject {
+    func gameViewDidReceive(api: String, parameter: String, response: String)
+}
+
+
 class GameView : UIView {
+    weak var delegate: GameViewDelegate? = nil
+
     private var gameContentURL: URL? = nil
     private var gameContentLoadRequested: Bool = false
     private weak var webView: WKWebView!
 
-    private static let kGameURL = URL(string: "http://www.dmm.com/netgame/social/-/gadgets/=/app_id=854854/")!
+    private let kGameURL = URL(string: "http://www.dmm.com/netgame/social/-/gadgets/=/app_id=854854/")!
+    private let kDefaultSize = CGSize(width: 1200, height: 720)
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+        self.autoresizesSubviews = false
 
         let userController = WKUserContentController()
         userController.add(self, name: "callbackHandler")
@@ -20,11 +29,12 @@ class GameView : UIView {
 
         let webView = WKWebView(frame: frame, configuration: webConfiguration)
         webView.navigationDelegate = self
+        webView.scrollView.isScrollEnabled = false
 
         self.addSubview(webView)
         self.webView = webView
 
-        let request = URLRequest(url: GameView.kGameURL)
+        let request = URLRequest(url: kGameURL)
         webView.load(request)
     }
 
@@ -34,7 +44,22 @@ class GameView : UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.webView.frame = CGRect(origin: .zero, size: self.bounds.size)
+        let scale = kDefaultSize.scaleAspectFit(within: self.bounds.size)
+        webView.transform = CGAffineTransform(scaleX: scale, y: scale)
+        let size = kDefaultSize.aspectFit(within: self.bounds.size)
+        webView.frame = CGRect(origin: .zero, size: size)
+    }
+}
+
+
+extension CGSize {
+    func scaleAspectFit(within size: CGSize) -> CGFloat {
+        return min(size.width / self.width, size.height / self.height)
+    }
+
+    func aspectFit(within size: CGSize) -> CGSize {
+        let scale = self.scaleAspectFit(within: size)
+        return CGSize(width: self.width * scale, height: self.height * scale)
     }
 }
 
@@ -50,7 +75,7 @@ extension GameView : WKScriptMessageHandler {
         guard let api = body["url"] as? String, let response = body["response"] as? String, let request = body["request"] as? String else {
             return
         }
-        print(api, request)
+        self.delegate?.gameViewDidReceive(api: api, parameter: request, response: response)
     }
 }
 
