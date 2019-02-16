@@ -99,7 +99,10 @@ class GameView : UIView {
     fileprivate func callUserScript(function: String, args: String = "") {
         let code = """
         (() => {
-            if (typeof window.nkcv.\(function) == 'undefined') {
+            if (typeof window.nkcv == 'undefined') {
+                return;
+            }
+            if (typeof window.nkcv.\(function) != 'function') {
                 return;
             }
             window.nkcv.\(function)(\(args));
