@@ -23,7 +23,13 @@ class GameView : UIView {
         self.autoresizesSubviews = false
 
         let userController = WKUserContentController()
-        userController.add(self, name: "callbackHandler")
+        userController.add(self, name: "onGameApiResponse")
+        userController.add(self, name: "debug")
+
+        if let sourceFileURL = Bundle.main.url(forResource: "user-script", withExtension: "js"), let source = try? String(contentsOf: sourceFileURL) {
+            let script = WKUserScript(source: source, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
+            userController.addUserScript(script)
+        }
 
         let webConfiguration = WKWebViewConfiguration()
         webConfiguration.userContentController = userController
@@ -78,32 +84,32 @@ class GameView : UIView {
         guard let webView = self.webView else {
             return
         }
-        let script = """
-(function() {
-    Howler.mute(false);
-})();
-"""
-        webView.evaluateJavaScript(script) { (_, error) in
-            if let error = error {
-                print(error)
-            }
-        }
+        self.callUserScript(function: "unmute")
+        webView.isHidden = false;
     }
 
     private func detachWebView() {
         guard let webView = self.webView else {
             return
         }
-        let script = """
-(function() {
-    Howler.mute(true);
-})();
-"""
-        webView.evaluateJavaScript(script) { (_, error) in
+        self.callUserScript(function: "mute")
+        webView.isHidden = true
+    }
+
+    fileprivate func callUserScript(function: String, args: String = "") {
+        let code = """
+        (() => {
+            if (typeof window.nkcv.\(function) == 'undefined') {
+                return;
+            }
+            window.nkcv.\(function)(\(args));
+        })();
+        """
+        webView?.evaluateJavaScript(code, completionHandler: { (_, error) in
             if let error = error {
                 print(error)
             }
-        }
+        })
     }
 }
 
@@ -122,16 +128,20 @@ extension CGSize {
 
 extension GameView : WKScriptMessageHandler {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        guard message.name == "callbackHandler" else {
-            return
+        switch message.name {
+        case "onGameApiResponse":
+            guard let body = message.body as? [String: Any] else {
+                return
+            }
+            guard let api = body["url"] as? String, let response = body["response"] as? String, let request = body["request"] as? String else {
+                return
+            }
+            self.delegate?.gameViewDidReceive(api: api, parameter: request, response: response)
+        case "debug":
+            print(message.body)
+        default:
+            break
         }
-        guard let body = message.body as? [String: Any] else {
-            return
-        }
-        guard let api = body["url"] as? String, let response = body["response"] as? String, let request = body["request"] as? String else {
-            return
-        }
-        self.delegate?.gameViewDidReceive(api: api, parameter: request, response: response)
     }
 }
 
@@ -139,24 +149,7 @@ extension GameView : WKScriptMessageHandler {
 extension GameView : WKNavigationDelegate {
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         if self.gameContentLoadRequested {
-            let script = """
-            axios.interceptors.response.use((response) => {
-                const data = {
-                    url: response.config.url,
-                    response: response.data,
-                    request: response.config.data
-                };
-                window.webkit.messageHandlers.callbackHandler.postMessage(data);
-                return response;
-            }, (error) => {
-                return Promise.reject(error);
-            });
-            """
-            webView.evaluateJavaScript(script) { (value, error) in
-                if let error = error {
-                    print(error)
-                }
-            }
+            self.callUserScript(function: "injectApiHook")
         } else {
             guard let gameContentURL = self.gameContentURL else {
                 return

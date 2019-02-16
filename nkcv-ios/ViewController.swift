@@ -9,7 +9,6 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-
         let webView = GameView(frame: .zero)
         self.containerView.addSubview(webView)
         self.webView = webView
