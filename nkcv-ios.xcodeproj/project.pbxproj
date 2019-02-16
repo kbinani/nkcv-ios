@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		93D8E5DB1354DD37080C0BF1 /* Pods_nkcv_ios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A72EE9ABCBF468D708D7154 /* Pods_nkcv_ios.framework */; };
 		94249E652217D39C007A6FDB /* user-script.js in Resources */ = {isa = PBXBuildFile; fileRef = 94249E642217D39C007A6FDB /* user-script.js */; };
+		94249E672217DB89007A6FDB /* runOnMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94249E662217DB89007A6FDB /* runOnMain.swift */; };
+		94249E692217DBA2007A6FDB /* NotificationCenterSubscriber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94249E682217DBA2007A6FDB /* NotificationCenterSubscriber.swift */; };
+		94249E6B2217DBD3007A6FDB /* CGSize+Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94249E6A2217DBD3007A6FDB /* CGSize+Util.swift */; };
 		9450BBF5220C9D0100785814 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9450BBF4220C9D0100785814 /* AppDelegate.swift */; };
 		9450BBF7220C9D0100785814 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9450BBF6220C9D0100785814 /* ViewController.swift */; };
 		9450BBFA220C9D0100785814 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9450BBF8220C9D0100785814 /* Main.storyboard */; };
@@ -23,6 +26,9 @@
 		035D6E5B42AEF8FE9E7C28D6 /* Pods-nkcv-ios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nkcv-ios.debug.xcconfig"; path = "Target Support Files/Pods-nkcv-ios/Pods-nkcv-ios.debug.xcconfig"; sourceTree = "<group>"; };
 		0A72EE9ABCBF468D708D7154 /* Pods_nkcv_ios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nkcv_ios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		94249E642217D39C007A6FDB /* user-script.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "user-script.js"; sourceTree = "<group>"; };
+		94249E662217DB89007A6FDB /* runOnMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = runOnMain.swift; sourceTree = "<group>"; };
+		94249E682217DBA2007A6FDB /* NotificationCenterSubscriber.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCenterSubscriber.swift; sourceTree = "<group>"; };
+		94249E6A2217DBD3007A6FDB /* CGSize+Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGSize+Util.swift"; sourceTree = "<group>"; };
 		9450BBF1220C9D0100785814 /* nkcv-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "nkcv-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9450BBF4220C9D0100785814 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9450BBF6220C9D0100785814 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -90,11 +96,14 @@
 			children = (
 				9450BBF4220C9D0100785814 /* AppDelegate.swift */,
 				9450BBFB220C9D0300785814 /* Assets.xcassets */,
+				94249E6A2217DBD3007A6FDB /* CGSize+Util.swift */,
 				94577AB12216FDFE00DB621B /* ContainerView.swift */,
 				94577AAF2216F83C00DB621B /* GameView.swift */,
 				9450BC00220C9D0300785814 /* Info.plist */,
 				9450BBFD220C9D0300785814 /* LaunchScreen.storyboard */,
 				9450BBF8220C9D0100785814 /* Main.storyboard */,
+				94249E682217DBA2007A6FDB /* NotificationCenterSubscriber.swift */,
+				94249E662217DB89007A6FDB /* runOnMain.swift */,
 				94249E642217D39C007A6FDB /* user-script.js */,
 				9450BBF6220C9D0100785814 /* ViewController.swift */,
 			);
@@ -200,9 +209,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				94577AB22216FDFE00DB621B /* ContainerView.swift in Sources */,
+				94249E672217DB89007A6FDB /* runOnMain.swift in Sources */,
 				9450BBF7220C9D0100785814 /* ViewController.swift in Sources */,
 				94577AB02216F83C00DB621B /* GameView.swift in Sources */,
 				9450BBF5220C9D0100785814 /* AppDelegate.swift in Sources */,
+				94249E6B2217DBD3007A6FDB /* CGSize+Util.swift in Sources */,
+				94249E692217DBA2007A6FDB /* NotificationCenterSubscriber.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
